@@ -1,0 +1,319 @@
+%{
+#include<iostream>
+#include <string>
+using namespace std;
+
+class YYSTYPE
+{
+    public: 
+
+    int num_line;
+    int num_char;
+    int num_methodDef;
+    int num_comments;
+    int num_int;
+    string lineReadLast;
+    int startingLineno;
+    int characterNumInLine;
+    int startingCharacterNum;
+    int num_if;
+    int num_elsif;
+    int num_else;
+    int num_print;
+    int num_singleString;
+    int num_doubleString;
+    int num_next;
+    int num_break;
+    int num_hex;
+    int num_binary;
+    int num_intIdentifier;
+    int num_intSigned;
+    int num_returned;
+
+    YYSTYPE()
+    {
+        num_line = 1;
+        num_char = 0;
+		num_methodDef= 0;
+		num_comments = 0;
+		lineReadLast = "";
+		num_int = 0;
+		startingLineno = 0;
+		characterNumInLine= 0;
+		startingCharacterNum = 0;
+		num_if = 0;
+		num_elsif = 0;
+		num_else = 0;
+		num_print = 0;
+		num_next = 0;
+		num_singleString= 0;
+		num_doubleString= 0;
+		num_break =0;
+		num_hex = 0;
+		num_binary = 0;
+		num_intIdentifier = 0;
+		num_intSigned = 0;
+		num_returned = 0;
+    }
+};
+
+YYSTYPE yylval;
+%}
+
+%%
+
+.    { yylval.num_char++; return 1; }
+\n   { yylval.num_line++; yylval.characterNumInLine= 0; return 2; }
+def  { yylval.num_methodDef++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			
+			return 3; }
+#.+  {  yylval.num_comments++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext;   return 4; }
+[0-9]+   { yylval.num_int++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+	return 5; }
+if   { yylval.num_if++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 6;
+		}
+elsif { yylval.num_elsif++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 7;
+		}
+else { yylval.num_else++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 8;
+		}
+print { yylval.num_print++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 9;
+		}
+\"[^(\")]*(\") { yylval.num_doubleString++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 10;
+		}
+'[^']*(')  { yylval.num_singleString++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 11;
+		}
+
+next { yylval.num_next++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 12;
+		}
+break { yylval.num_break++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 13;
+		}
+0[xX][0-9a-fA-F]+ { yylval.num_hex++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 14;
+		}
+0[bB][0-1]{5} { yylval.num_binary++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 15;
+		}
+int {  yylval.num_intIdentifier++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+			return 16;
+		}
+-[0-9]+   { yylval.num_intSigned++; 
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+	return 17; }
+[ \t] {		yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+	return 18;
+	}
+\:\: {
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+	return 19;
+	
+	}
+\[ {
+			yylval.startingCharacterNum = yylval.characterNumInLine; 
+			yylval.startingLineno = yylineno; 
+			yylval.characterNumInLine++; 
+			yylval.lineReadLast = yytext; 
+	return 20;
+	
+	}
+\] {
+		yylval.startingCharacterNum = yylval.characterNumInLine; 
+		yylval.startingLineno = yylineno; 
+		yylval.characterNumInLine++; 
+		yylval.lineReadLast = yytext; 
+return 21;
+
+}
+\. {
+		yylval.startingCharacterNum = yylval.characterNumInLine; 
+		yylval.startingLineno = yylineno; 
+		yylval.characterNumInLine++; 
+		yylval.lineReadLast = yytext; 
+return 22;
+
+}
+
+"return" {
+	yylval.startingCharacterNum = yylval.characterNumInLine; 
+		yylval.startingLineno = yylineno; 
+		yylval.characterNumInLine++; 
+		yylval.lineReadLast = yytext; 
+return 23;
+
+}
+
+	
+%%
+
+main()
+{
+    int tok_type;
+
+    while(tok_type = yylex()){
+		switch(tok_type){
+			case 3:
+				cout << "method definition\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 4:
+				cout << "comment\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 5:
+				cout << "int\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 6:
+				cout << "if statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 7:
+				cout << "else-if statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 8:
+				cout << "else statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 9:
+				cout << "print statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 10:
+				cout << "double quote string\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 11:
+				cout << "single quote string\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 12:
+				cout << "next statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 13:
+				cout << "break statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 14:
+				cout << "hex number\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 15:
+				cout << "binary number\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 16:
+				cout << "int number identifier\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 17:
+				cout << "int(Signed) number identifier\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 18:
+				cout << "tab \t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 19:
+				cout << "this :: thing\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 20:
+				cout << "left bracket\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 21:
+				cout << "right bracket\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 22:
+				cout << "period\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			case 23:
+				cout << "return statement\t" << yylval.lineReadLast <<"\t" << yylval.startingLineno<< "-"<< yylval.num_line << ":"<< yylval.startingCharacterNum << endl;
+				break;
+			default:
+				break;
+			
+		}
+
+	}
+	
+       
+
+    cout << "Number of lines: " << yylval.num_line << endl;
+    cout << "Number of characters: " << yylval.num_char << endl;
+    cout << "Number of method definitions: "<< yylval.num_methodDef << endl;
+    cout << "Number of Comments: " << yylval.num_comments << endl;
+    cout << "Numer of integers: " << yylval.num_int << endl;
+    cout << "Number of if statements: " << yylval.num_if << endl;
+    cout << "Number of else-if statements: " << yylval.num_elsif << endl;
+    cout << "Number of else statements: " << yylval.num_else << endl;
+    cout << "Number of print statements: " << yylval.num_print << endl;
+    cout << "Number of double quote strings: " << yylval.num_doubleString << endl;
+    cout << "Number of single quote strings: " << yylval.num_singleString << endl;
+    cout << "Number of next statements: " << yylval.num_next << endl;
+    cout << "Number of break statements: " << yylval.num_break << endl;
+    cout << "Number of hex numbers: " << yylval.num_hex << endl;
+    cout << "Number of binary numbers: " << yylval.num_binary << endl;
+    cout << "Number of int number identifiers: " << yylval.num_intIdentifier << endl;
+    cout << "Number of int(signed) numbers: " << yylval.num_intSigned << endl;
+    cout << "Number of return statements: " << yylval.num_returned << endl;
+
+
+}
+     
