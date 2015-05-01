@@ -161,6 +161,16 @@ ASTMethodCall::ASTPrint(ostream &o) const
   o << methodName << "(" << *arglist << ")";
 }
 
+GarnetPtr ASTEval()
+{
+  //evaluate the GarnetPtr in question
+
+}
+
+GarnetPtr ASTInteger::ASTEval()
+{
+  return make_object_from_prim(value);
+}
 
 void
 ASTWhile::ASTPrint(ostream &o) const

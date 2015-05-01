@@ -1,7 +1,7 @@
 %{
 #include "AST.h"
 #include "garnet.h"
-	
+
 #include <iostream>
 extern void init_keywords();
 
@@ -99,7 +99,7 @@ expression_list_ety: /*empty */ { $$ = new ASTExpressionListEmpty(); }
 		     
 
 expression : logic_expr { $$ = $1; }
-
+			
 
 
 logic_expr : rel_expr ANDAND rel_expr {$$ =new ASTMethodCall("&&", new ASTArgListCompound($1, new ASTArgListSimple($3))); }

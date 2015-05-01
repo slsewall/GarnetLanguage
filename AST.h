@@ -92,7 +92,7 @@ class ASTInteger: public ASTExpression {
 
 public:  
   ASTInteger(int i, int line_init, int char_init);
-  
+  GarnetPtr ASTEval();
   void ASTPrint(ostream &o) const;
 };
 
@@ -104,10 +104,11 @@ class ASTString: public ASTExpression {
 
 public:  
   ASTString(string i, int line_init, int char_init);
-  
+  GarnetPtr ASTEval();
   void ASTPrint(ostream &o) const;
 };
-GarnetPtr ASTEval();
+
+
 
 class ASTArgList: public ASTExpression {
   // ASTArgList represents a comma separated argument
